@@ -2,21 +2,31 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const UserSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    main_position: {
+      type: String,
+    },
+    sub_position: {
+      type: String,
+    },
+    main_character: {
+      type: String,
+    },
+    today_player: {
+      type: Boolean,
+      default: false,
+    },
+    today_team: {
+      type: String,
+    },
   },
-  main_position: {
-    type: String,
-  },
-  sub_position: {
-    type: String,
-  },
-  main_character: {
-    type: String,
-  },
-});
+  { timestamps: true }
+);
 
 // User 모델 생성
 const User = mongoose.model("user", UserSchema);

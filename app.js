@@ -8,8 +8,8 @@ const indexRouter = require("./routes/index");
 
 // Express 앱 생성
 const app = express();
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cors());
 app.use("/api", indexRouter);
 const MONGODB_URI_PROD = process.env.MONGODB_URI_PROD;
 
@@ -25,6 +25,6 @@ mongoose
   });
 
 // 라우터 연결
-app.listen(8080, () => {
+app.listen(5000, () => {
   console.log("서버 시작");
 });

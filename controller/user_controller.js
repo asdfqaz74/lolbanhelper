@@ -67,4 +67,15 @@ userController.updateUser = async (req, res) => {
   }
 };
 
+// 5. 선수의 팀을 초기화하는 API
+userController.resetUserTeam = async (req, res) => {
+  try {
+    await User.updateMany({}, { today_team: "" });
+    res.status(200).json({ status: "팀 초기화 성공" });
+  } catch (e) {
+    res.status(400).json({ status: "팀 초기화 실패" });
+    console.error(e);
+  }
+};
+
 module.exports = userController;

@@ -7,9 +7,11 @@ const UserSchema = new Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     main_position: {
       type: String,
+      enum: ["탑", "정글", "미드", "원딜", "서포터"],
     },
     sub_position: {
       type: String,
@@ -22,6 +24,9 @@ const UserSchema = new Schema(
       default: false,
     },
     today_team: {
+      type: String,
+    },
+    game_id: {
       type: String,
     },
   },

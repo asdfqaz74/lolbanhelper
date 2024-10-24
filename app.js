@@ -8,6 +8,7 @@ const indexRouter = require("./routes/index");
 
 // Express 앱 생성
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/api", indexRouter);

@@ -25,9 +25,18 @@ const UserSchema = new Schema(
     },
     today_team: {
       type: String,
+      default: "",
     },
     game_id: {
       type: String,
+    },
+    last_two: {
+      type: Boolean,
+      default: false,
+    },
+    champion_stats: {
+      type: Schema.Types.ObjectId,
+      ref: "ChampionWinRate",
     },
   },
   { timestamps: true }

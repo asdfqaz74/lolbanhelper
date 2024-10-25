@@ -12,9 +12,12 @@ const UserSchema = new Schema(
     main_position: {
       type: String,
       enum: ["탑", "정글", "미드", "원딜", "서포터"],
+      default: "탑",
     },
     sub_position: {
       type: String,
+      enum: ["탑", "정글", "미드", "원딜", "서포터"],
+      default: "정글",
     },
     main_character: {
       type: String,
@@ -34,13 +37,29 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    champion_stats: {
-      type: Schema.Types.ObjectId,
-      ref: "ChampionWinRate",
-    },
+    champion_stats: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "ChampionWinRate",
+      },
+    ],
   },
   { timestamps: true }
 );
+
+UserSchema.methods.updateMainCharacter = async function () {
+  if (this.champion_stats && this.champion_stats.length > 0) {
+    const populatedUser = await this.populate("champion_stats").execPopulate();
+    const mostPlayedChampion = populatedUser.champion_stats.reduce(
+      (prev, cur) => {
+        return cur.games_played > prev.games_played ? cur : prev;
+      }
+    );
+
+    this.main_character = mostPlayedChampion.champion;
+    await this.save();
+  }
+};
 
 // User 모델 생성
 const User = mongoose.model("user", UserSchema);

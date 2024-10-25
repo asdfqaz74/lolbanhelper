@@ -82,9 +82,10 @@ userController.resetUserTeam = async (req, res) => {
 userController.resetWaitingList = async (req, res) => {
   try {
     await User.updateMany({}, { today_player: false });
-    res.status(200).json({ status: "대기명단 초기화 성공" });
+    await User.updateMany({}, { today_team: "" });
+    res.status(200).json({ status: "전체 초기화 성공" });
   } catch (e) {
-    res.status(400).json({ status: "대기명단 초기화 실패" });
+    res.status(400).json({ status: "전체 초기화 실패" });
     console.error(e);
   }
 };

@@ -33,10 +33,6 @@ const UserSchema = new Schema(
     game_id: {
       type: String,
     },
-    last_two: {
-      type: Boolean,
-      default: false,
-    },
     champion_stats: [
       {
         type: Schema.Types.ObjectId,

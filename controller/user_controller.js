@@ -78,4 +78,15 @@ userController.resetUserTeam = async (req, res) => {
   }
 };
 
+// 6. 대기명단을 초기화하는 API
+userController.resetWaitingList = async (req, res) => {
+  try {
+    await User.updateMany({}, { today_player: false });
+    res.status(200).json({ status: "대기명단 초기화 성공" });
+  } catch (e) {
+    res.status(400).json({ status: "대기명단 초기화 실패" });
+    console.error(e);
+  }
+};
+
 module.exports = userController;

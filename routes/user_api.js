@@ -2,19 +2,22 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controller/user_controller");
 
-// 5. 오늘의 선수 초기화 설정 API
+// 오늘의 선수 초기화 설정 API
 router.put("/reset-today", userController.resetUserTeam);
 
-// 1. 선수 추가 API
+// 대기명단 초기화 API
+router.put("/reset-wait", userController.resetWaitingList);
+
+// 선수 추가 API
 router.post("/", userController.createUser);
 
-// 2. 선수 조회 API
+// 선수 조회 API
 router.get("/", userController.getUser);
 
-// 3. 선수 삭제 API
+// 선수 삭제 API
 router.delete("/:id", userController.deleteUser);
 
-// 4. 선수 수정 API
+// 선수 수정 API
 router.put("/:id", userController.updateUser);
 
 module.exports = router;

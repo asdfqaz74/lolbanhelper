@@ -78,7 +78,7 @@ userController.resetUserTeam = async (req, res) => {
   }
 };
 
-// 6. 대기명단을 초기화하는 API
+// 6. 전체 초기화하는 API
 userController.resetWaitingList = async (req, res) => {
   try {
     await User.updateMany({}, { today_player: false });

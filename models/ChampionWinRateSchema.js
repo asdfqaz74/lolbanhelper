@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const GameRecord = require("./GameRecord");
 const Schema = mongoose.Schema;
 
 const ChampionWinRateSchema = new Schema(
@@ -32,6 +33,17 @@ ChampionWinRateSchema.methods.calculateWinRate = function () {
   } else {
     this.win_rate = 0;
   }
+};
+
+ChampionWinRateSchema.methods.updateStats = async function () {
+  const GameRecords = await GameRecord.find({ champion: this._id });
+
+  this.wins = GameRecords.filter((record) => record.result === "win").length;
+  this.losses = GameRecords.filter((record) => record.result === "loss").length;
+  this.games_played = this.wins + this.losses;
+  this.calculateWinRate();
+
+  await this.save();
 };
 
 const ChampionWinRate = mongoose.model(

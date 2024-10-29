@@ -13,6 +13,7 @@ router.post("/", userController.createUser);
 
 // 선수 조회 API
 router.get("/", userController.getUser);
+router.get("/:id", userController.getUser);
 
 // 선수 삭제 API
 router.delete("/:id", userController.deleteUser);

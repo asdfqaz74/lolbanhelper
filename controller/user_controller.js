@@ -31,7 +31,10 @@ userController.createUser = async (req, res) => {
 // 2. 선수 조회 API
 userController.getUser = async (req, res) => {
   try {
-    const userList = await User.find({}).select("-__v");
+    const { id } = req.params;
+    const userList = id
+      ? await User.find({ _id: id }).select("-__v")
+      : await User.find({}).select("-__v");
     res.status(200).json({ status: "조회 성공", data: userList });
   } catch (e) {
     res.status(400).json({ status: "조회 실패" });

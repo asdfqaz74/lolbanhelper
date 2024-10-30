@@ -11,12 +11,12 @@ const UserSchema = new Schema(
     },
     main_position: {
       type: String,
-      enum: ["탑", "정글", "미드", "원딜", "서포터"],
+      enum: ["탑", "정글", "미드", "원딜", "서포터", "올라운드"],
       default: "탑",
     },
     sub_position: {
       type: String,
-      enum: ["탑", "정글", "미드", "원딜", "서포터"],
+      enum: ["탑", "정글", "미드", "원딜", "서포터", "나머지"],
       default: "정글",
     },
     main_character: {

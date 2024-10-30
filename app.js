@@ -5,6 +5,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const indexRouter = require("./routes/index");
+const saveChampionsToDB = require("./scripts/saveChampions");
 
 // Express 앱 생성
 const app = express();

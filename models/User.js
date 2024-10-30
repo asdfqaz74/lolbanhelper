@@ -33,26 +33,23 @@ const UserSchema = new Schema(
     game_id: {
       type: String,
     },
-    champion_stats: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "ChampionWinRate",
-      },
-    ],
   },
   { timestamps: true }
 );
 
+// 가장 많이 플레이한 챔피언을 가져오는 메소드
 UserSchema.methods.updateMainCharacter = async function () {
-  if (this.champion_stats && this.champion_stats.length > 0) {
-    const populatedUser = await this.populate("champion_stats").execPopulate();
-    const mostPlayedChampion = populatedUser.champion_stats.reduce(
-      (prev, cur) => {
-        return cur.games_played > prev.games_played ? cur : prev;
-      }
-    );
+  const MatchStats = require("./MatchStats");
 
-    this.main_character = mostPlayedChampion.champion;
+  const records = await MatchStats.aggregate([
+    { $match: { user: this._id } },
+    { $group: { _id: "$champion", gamesPlayed: { $sum: 1 } } },
+    { $sort: { gamesPlayed: -1 } },
+    { $limit: 1 },
+  ]);
+
+  if (records.length > 0) {
+    this.main_character = records[0]._id;
     await this.save();
   }
 };

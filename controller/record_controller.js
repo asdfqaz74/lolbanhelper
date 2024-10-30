@@ -1,26 +1,25 @@
-const GameRecord = require("../models/GameRecord");
+const MatchStats = require("../models/MatchState");
 
-const recordController = {};
+const record_controller = {};
 
-// 선수의 기록 조희 API
-recordController.getRecords = async (req, res) => {
+record_controller.createRecords = async (req, res) => {
   try {
-    const userID = req.params.userID;
-
-    const records = await GameRecord.find({ user: userID }).populate(
-      "champion",
-      "champion win_rate games_played"
-    );
-
-    if (!records) {
-      return res.status(404).json({ message: "Records not found" });
-    }
-
-    return res.status(200).json(records);
+    const { victoryordefeat, kills, deaths, assists, champion, user } =
+      req.body;
+    const newRecord = new MatchStats({
+      user,
+      champion,
+      victoryordefeat,
+      kills,
+      deaths,
+      assists,
+    });
+    await newRecord.save();
+    res.status(200).json({ status: "생성 성공", data: newRecord });
   } catch (e) {
+    res.status(400).json({ status: "생성 실패" });
     console.error(e);
-    return res.status(500).json(e);
   }
 };
 
-module.exports = recordController;
+module.exports = record_controller;

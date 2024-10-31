@@ -5,4 +5,7 @@ const recordController = require("../controller/record_controller");
 
 router.post("/", recordController.createRecords);
 
+router.get("/", recordController.getTotalMatchStats);
+
+router.get("/champion", recordController.getChampion);
 module.exports = router;

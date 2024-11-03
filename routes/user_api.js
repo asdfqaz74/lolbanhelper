@@ -11,8 +11,10 @@ router.put("/reset-wait", userController.resetWaitingList);
 // 선수 추가 API
 router.post("/", userController.createUser);
 
-// 선수 조회 API
+// 선수 전체 조회 API
 router.get("/", userController.getUser);
+
+// 선수 조회 API
 router.get("/:id", userController.getUser);
 
 // 선수 삭제 API

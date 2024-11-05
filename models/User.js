@@ -33,6 +33,10 @@ const UserSchema = new Schema(
     game_id: {
       type: String,
     },
+    isMVP: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

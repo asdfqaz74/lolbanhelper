@@ -1,5 +1,6 @@
-const MatchStats = require("../models/MatchState");
+const MatchStats = require("../models/MatchStats");
 const Champion = require("../models/Champion");
+const User = require("../models/User");
 
 const record_controller = {};
 
@@ -17,6 +18,12 @@ record_controller.createRecords = async (req, res) => {
       assists,
     });
     await newRecord.save();
+
+    const userInstance = await User.findById(user);
+    if (userInstance) {
+      await userInstance.updateMainCharacter();
+    }
+
     res.status(200).json({ status: "생성 성공", data: newRecord });
   } catch (e) {
     res.status(400).json({ status: "생성 실패" });

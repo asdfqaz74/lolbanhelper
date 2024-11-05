@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./User");
 const Schema = mongoose.Schema;
 
 const MatchStatsSchema = new Schema(
@@ -31,6 +32,26 @@ const MatchStatsSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// 해당 유저의 전적을 가져와서 승률 60% 이상이면 User의 isMVP를 true로 이하면 false로 설정하는 메소드
+MatchStatsSchema.statics.getMVP = async function (userID) {
+  const winCount = await this.countDocuments({
+    user: userID,
+    victoryordefeat: "win",
+  });
+  const totalCount = await this.countDocuments({ user: userID });
+  const winRate = winCount / totalCount;
+
+  if (winRate >= 0.6) {
+    const user = await User.findById(userID);
+    user.isMVP = true;
+    await user.save();
+  } else {
+    const user = await User.findById(userID);
+    user.isMVP = false;
+    await user.save();
+  }
+};
 
 // 해당 유저의 해당 챔피언의 전적을 가져오는 메소드
 MatchStatsSchema.statics.getMatchStats = async function (userID, championID) {

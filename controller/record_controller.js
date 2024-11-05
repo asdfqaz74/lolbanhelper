@@ -24,6 +24,8 @@ record_controller.createRecords = async (req, res) => {
       await userInstance.updateMainCharacter();
     }
 
+    await MatchStats.getMVP(user);
+
     res.status(200).json({ status: "생성 성공", data: newRecord });
   } catch (e) {
     res.status(400).json({ status: "생성 실패" });

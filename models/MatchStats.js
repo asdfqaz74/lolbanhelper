@@ -53,6 +53,26 @@ MatchStatsSchema.statics.getMVP = async function (userID) {
   }
 };
 
+// 해당 유저의 전적을 가져와서 승률 40% 이하이면 User의 isSad를 true로 이상이면 false로 설정하는 메소드
+MatchStatsSchema.statics.getSad = async function (userID) {
+  const winCount = await this.countDocuments({
+    user: userID,
+    victoryordefeat: "win",
+  });
+  const totalCount = await this.countDocuments({ user: userID });
+  const winRate = winCount / totalCount;
+
+  if (winRate <= 0.4) {
+    const user = await User.findById(userID);
+    user.isSad = true;
+    await user.save();
+  } else {
+    const user = await User.findById(userID);
+    user.isSad = false;
+    await user.save();
+  }
+};
+
 // 해당 유저의 해당 챔피언의 전적을 가져오는 메소드
 MatchStatsSchema.statics.getMatchStats = async function (userID, championID) {
   return this.countDocuments({ user: userID, champion: championID });

@@ -43,7 +43,7 @@ MatchStatsSchema.statics.getMVP = async function (userID) {
   const totalCount = await this.countDocuments({ user: userID });
   const winRate = winCount / totalCount;
 
-  if (winRate >= HAPPY_WIN_RATE) {
+  if (winRate >= HAPPY_WIN_RATE && totalCount >= 20) {
     const user = await User.findById(userID);
     user.isMVP = true;
     await user.save();
@@ -63,7 +63,7 @@ MatchStatsSchema.statics.getSad = async function (userID) {
   const totalCount = await this.countDocuments({ user: userID });
   const winRate = winCount / totalCount;
 
-  if (winRate <= SAD_WIN_RATE) {
+  if (winRate <= SAD_WIN_RATE && totalCount >= 20) {
     const user = await User.findById(userID);
     user.isSad = true;
     await user.save();

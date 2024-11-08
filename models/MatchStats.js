@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./User");
+const { HAPPY_WIN_RATE, SAD_WIN_RATE } = require("../constants");
 const Schema = mongoose.Schema;
 
 const MatchStatsSchema = new Schema(
@@ -42,7 +43,7 @@ MatchStatsSchema.statics.getMVP = async function (userID) {
   const totalCount = await this.countDocuments({ user: userID });
   const winRate = winCount / totalCount;
 
-  if (winRate >= 0.6) {
+  if (winRate >= HAPPY_WIN_RATE) {
     const user = await User.findById(userID);
     user.isMVP = true;
     await user.save();
@@ -62,7 +63,7 @@ MatchStatsSchema.statics.getSad = async function (userID) {
   const totalCount = await this.countDocuments({ user: userID });
   const winRate = winCount / totalCount;
 
-  if (winRate <= 0.4) {
+  if (winRate <= SAD_WIN_RATE) {
     const user = await User.findById(userID);
     user.isSad = true;
     await user.save();

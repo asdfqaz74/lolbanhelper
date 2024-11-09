@@ -84,6 +84,134 @@ MatchStatsSchema.methods.getRecentMatchStats = async function (userID) {
   return this.find({ user: userID }).limit(5).sort({ createdAt: -1 });
 };
 
+// 챔피언 모스트 10 : 모든 매치 중에서 해당 챔피언이 가장 많이 픽된 챔피언을 가져오는 메소드
+MatchStatsSchema.statics.getMostChampion = async function () {
+  const response = await this.aggregate([
+    {
+      $group: {
+        _id: "$champion",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { count: -1 },
+    },
+    {
+      $limit: 10,
+    },
+  ]);
+
+  return response;
+};
+
+// 승률 모스트 5 : 모든 매치 중에서 승률이 가장 높은 챔피언을 가져오는 메소드
+MatchStatsSchema.statics.getMostWinRate = async function () {
+  const response = await this.aggregate([
+    {
+      $group: {
+        _id: "$champion",
+        win: {
+          $sum: {
+            $cond: [{ $eq: ["$victoryordefeat", "win"] }, 1, 0],
+          },
+        },
+        total: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        winRate: {
+          $divide: ["$win", "$total"],
+        },
+        total: 1,
+      },
+    },
+    {
+      $match: { total: { $gte: 5 } },
+    },
+    {
+      $sort: { winRate: -1 },
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+
+  return response;
+};
+
+// 승률 워스트 5 : 모든 매치 중에서 승률이 가장 낮은 챔피언을 가져오는 메소드
+MatchStatsSchema.statics.getLeastWinRate = async function () {
+  const response = await this.aggregate([
+    {
+      $group: {
+        _id: "$champion",
+        win: {
+          $sum: {
+            $cond: [{ $eq: ["$victoryordefeat", "win"] }, 1, 0],
+          },
+        },
+        total: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        winRate: {
+          $divide: ["$win", "$total"],
+        },
+        total: 1,
+      },
+    },
+    {
+      $match: { total: { $gte: 5 } },
+    },
+    {
+      $sort: { winRate: 1 },
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+
+  return response;
+};
+
+// 승률 모스트 5 : 모든 매치 중에서 승률이 가장 높은 유저를 가져오는 메소드
+MatchStatsSchema.statics.getMostUserWinRate = async function () {
+  const response = await this.aggregate([
+    {
+      $group: {
+        _id: "$user",
+        win: {
+          $sum: {
+            $cond: [{ $eq: ["$victoryordefeat", "win"] }, 1, 0],
+          },
+        },
+        total: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        winRate: {
+          $divide: ["$win", "$total"],
+        },
+        total: 1,
+      },
+    },
+    {
+      $match: { total: { $gte: 10 } },
+    },
+    {
+      $sort: { winRate: -1 },
+    },
+    {
+      $limit: 5,
+    },
+  ]);
+
+  return response;
+};
+
 const MatchStats = mongoose.model("MatchStats", MatchStatsSchema);
 
 module.exports = MatchStats;

@@ -8,4 +8,6 @@ router.post("/", recordController.createRecords);
 router.get("/", recordController.getTotalMatchStats);
 
 router.get("/champion", recordController.getChampion);
+
+router.get("/ranking", recordController.getRanking);
 module.exports = router;

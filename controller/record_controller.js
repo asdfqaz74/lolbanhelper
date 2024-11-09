@@ -56,4 +56,23 @@ record_controller.getTotalMatchStats = async (req, res) => {
   }
 };
 
+record_controller.getRanking = async (req, res) => {
+  try {
+    const mostChampion = await MatchStats.getMostChampion();
+    const mostWinRate = await MatchStats.getMostWinRate();
+    const leastChampion = await MatchStats.getLeastWinRate();
+    const mostUserWinRate = await MatchStats.getMostUserWinRate();
+
+    res
+      .status(200)
+      .json({
+        status: "조회 성공",
+        data: { mostChampion, mostWinRate, leastChampion, mostUserWinRate },
+      });
+  } catch (e) {
+    res.status(400).json({ status: "조회 실패" });
+    console.error(e);
+  }
+};
+
 module.exports = record_controller;

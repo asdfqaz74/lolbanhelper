@@ -18,8 +18,34 @@ const processRoflFileWithoutReader = async (filePath) => {
     // statsJson을 JSON 객체로 변환
     const statsJson = JSON.parse(parsedMetadata.statsJson);
 
+    const filteredStats = statsJson.map((player) => ({
+      summonerName: "",
+      champion: player.SKIN,
+      team:
+        player.TEAM === "100"
+          ? "BLUE"
+          : player.TEAM === "200"
+          ? "RED"
+          : "UNKNOWN",
+      position: player.TEAM_POSITION,
+      kills: player.CHAMPIONS_KILLED,
+      deaths: player.NUM_DEATHS,
+      assists: player.ASSISTS,
+      cs: player.MINIONS_KILLED,
+      totalDamage_dealt: player.TOTAL_DAMAGE_DEALT_TO_CHAMPIONS,
+      totalDamage_taken: player.TOTAL_DAMAGE_TAKEN,
+      magicDamage_dealt: player.MAGIC_DAMAGE_DEALT_TO_CHAMPIONS,
+      physicalDamage_dealt: player.PHYSICAL_DAMAGE_DEALT_TO_CHAMPIONS,
+      trueDamage_dealt: player.TRUE_DAMAGE_DEALT_TO_CHAMPIONS,
+      visionScore: player.VISION_SCORE,
+      visionWardsBought: player.VISION_WARDS_BOUGHT_IN_GAME,
+      wardsPlaced: player.WARDS_PLACED,
+      wardsKilled: player.WARDS_KILLED,
+      win: player.WIN === "Win" ? true : false,
+    }));
+
     return {
-      statsJson, // JSON 객체로 반환
+      statsJson: filteredStats, // JSON 객체로 반환
     };
   } catch (e) {
     throw new Error("ROFL 파일 처리 오류: " + e.message);

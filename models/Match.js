@@ -5,6 +5,11 @@ const MatchSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
+  processed: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 const Match = mongoose.model("Match", MatchSchema);

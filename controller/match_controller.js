@@ -45,7 +45,7 @@ const processRoflFileWithoutReader = async (filePath) => {
     }));
 
     return {
-      statsJson: filteredStats, // JSON 객체로 반환
+      statsJson: filteredStats,
     };
   } catch (e) {
     throw new Error("ROFL 파일 처리 오류: " + e.message);
@@ -70,6 +70,24 @@ matchController.uploadAndProcessMatch = async (req, res) => {
     res
       .status(200)
       .json({ message: "파일 업로드 및 분석 성공", data: processedData });
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
+};
+
+matchController.getUnprocessedMatch = async (req, res) => {
+  try {
+    const match = await Match.findOne({ processed: false });
+
+    if (!match) {
+      return res
+        .status(404)
+        .json({ message: "처리되지 않은 파일이 없습니다." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "처리되지 않은 파일 조회 성공", data: match });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }

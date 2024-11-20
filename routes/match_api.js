@@ -1,6 +1,9 @@
 const express = require("express");
 const multer = require("multer");
-const { uploadAndProcessMatch } = require("../controller/match_controller");
+const {
+  uploadAndProcessMatch,
+  getUnprocessedMatch,
+} = require("../controller/match_controller");
 const router = express.Router();
 
 const upload = multer({
@@ -15,5 +18,7 @@ const upload = multer({
 });
 
 router.post("/upload", upload.single("roflFile"), uploadAndProcessMatch);
+
+router.get("/", getUnprocessedMatch);
 
 module.exports = router;

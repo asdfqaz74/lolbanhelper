@@ -34,6 +34,49 @@ record_controller.createRecords = async (req, res) => {
   }
 };
 
+// 여러명의 전적 생성
+record_controller.createManyRecords = async (req, res) => {
+  try {
+    const records = req.body;
+
+    if (!Array.isArray(records)) {
+      return res
+        .status(400)
+        .json({ status: "fail", message: "records는 배열이어야 합니다." });
+    }
+
+    const createdRecords = [];
+
+    for (const record of records) {
+      const { victoryordefeat, kills, deaths, assists, champion, user } =
+        record;
+      const newRecord = new MatchStats({
+        user,
+        champion,
+        victoryordefeat,
+        kills,
+        deaths,
+        assists,
+      });
+      await newRecord.save();
+      createdRecords.push(newRecord);
+
+      const userInstance = await User.findById(user);
+      if (userInstance) {
+        await userInstance.updateMainCharacter();
+      }
+
+      await MatchStats.getMVP(user);
+      await MatchStats.getSad(user);
+    }
+
+    res.status(200).json({ status: "생성 성공", data: createdRecords });
+  } catch (e) {
+    res.status(400).json({ status: "생성 실패" });
+    console.error(e);
+  }
+};
+
 // 챔피언 조회
 record_controller.getChampion = async (req, res) => {
   try {
@@ -63,12 +106,10 @@ record_controller.getRanking = async (req, res) => {
     const leastChampion = await MatchStats.getLeastWinRate();
     const mostUserWinRate = await MatchStats.getMostUserWinRate();
 
-    res
-      .status(200)
-      .json({
-        status: "조회 성공",
-        data: { mostChampion, mostWinRate, leastChampion, mostUserWinRate },
-      });
+    res.status(200).json({
+      status: "조회 성공",
+      data: { mostChampion, mostWinRate, leastChampion, mostUserWinRate },
+    });
   } catch (e) {
     res.status(400).json({ status: "조회 실패" });
     console.error(e);

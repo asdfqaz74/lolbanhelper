@@ -41,6 +41,7 @@ const processRoflFileWithoutReader = async (filePath) => {
       visionWardsBought: player.VISION_WARDS_BOUGHT_IN_GAME,
       wardsPlaced: player.WARDS_PLACED,
       wardsKilled: player.WARDS_KILLED,
+      id: player.PUUID,
       win: player.WIN === "Win" ? true : false,
     }));
 
@@ -92,5 +93,7 @@ matchController.getUnprocessedMatch = async (req, res) => {
     res.status(400).json({ message: e.message });
   }
 };
+
+matchController.postProcessedMatch = async (req, res) => {};
 
 module.exports = matchController;

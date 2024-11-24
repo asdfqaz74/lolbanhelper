@@ -18,6 +18,8 @@ const processRoflFileWithoutReader = async (filePath) => {
     // statsJson을 JSON 객체로 변환
     const statsJson = JSON.parse(parsedMetadata.statsJson);
 
+    const sortedPosition = ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"];
+
     const filteredStats = statsJson.map((player) => ({
       summonerName: "",
       champion: player.SKIN,
@@ -45,8 +47,14 @@ const processRoflFileWithoutReader = async (filePath) => {
       win: player.WIN === "Win" ? true : false,
     }));
 
+    const sortedStats = filteredStats.sort(
+      (a, b) =>
+        a.team.localeCompare(b.team) ||
+        sortedPosition.indexOf(a.position) - sortedPosition.indexOf(b.position)
+    );
+
     return {
-      statsJson: filteredStats,
+      statsJson: sortedStats,
     };
   } catch (e) {
     throw new Error("ROFL 파일 처리 오류: " + e.message);

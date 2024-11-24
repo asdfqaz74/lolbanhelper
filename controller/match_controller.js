@@ -102,6 +102,27 @@ matchController.getUnprocessedMatch = async (req, res) => {
   }
 };
 
-matchController.postProcessedMatch = async (req, res) => {};
+matchController.putProcessedMatch = async (req, res) => {
+  const { _id, statsJson } = req.body;
+
+  try {
+    const match = await Match.findByIdAndUpdate(
+      _id,
+      {
+        processed: true,
+        statsJson,
+      },
+      { new: true }
+    );
+
+    if (!match) {
+      return res.status(404).json({ message: "경기를 찾을 수 없습니다." });
+    }
+
+    res.status(200).json({ message: "경기 처리 성공", data: match });
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
+};
 
 module.exports = matchController;

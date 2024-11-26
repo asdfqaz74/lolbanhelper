@@ -51,7 +51,7 @@ const processRoflFileWithoutReader = async (filePath) => {
       ...filteredStats.map((player) => player.totalDamage_dealt)
     );
 
-    const maxDamage = maxDamageValue + 5000;
+    const maxDamage = maxDamageValue + 1000;
 
     const sortedStats = filteredStats.sort(
       (a, b) =>

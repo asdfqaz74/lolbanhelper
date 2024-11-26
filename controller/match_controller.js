@@ -47,6 +47,12 @@ const processRoflFileWithoutReader = async (filePath) => {
       win: player.WIN === "Win" ? true : false,
     }));
 
+    const maxDamageValue = Math.max(
+      ...filteredStats.map((player) => player.totalDamage_dealt)
+    );
+
+    const maxDamage = maxDamageValue + 10000;
+
     const sortedStats = filteredStats.sort(
       (a, b) =>
         a.team.localeCompare(b.team) ||
@@ -55,6 +61,7 @@ const processRoflFileWithoutReader = async (filePath) => {
 
     return {
       statsJson: sortedStats,
+      maxDamage,
     };
   } catch (e) {
     throw new Error("ROFL 파일 처리 오류: " + e.message);

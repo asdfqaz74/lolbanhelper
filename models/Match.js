@@ -11,6 +11,10 @@ const MatchSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    maxDamage: {
+      type: Number,
+      required: true,
+    },
   },
   {
     timestamps: true,

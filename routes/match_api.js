@@ -5,6 +5,7 @@ const {
   getUnprocessedMatch,
   putProcessedMatch,
   getOneProcessedMatch,
+  getProcessedMatch,
 } = require("../controller/match_controller");
 const router = express.Router();
 
@@ -24,6 +25,8 @@ router.post("/upload", upload.single("roflFile"), uploadAndProcessMatch);
 router.get("/", getUnprocessedMatch);
 
 router.get("/one", getOneProcessedMatch);
+
+router.get("/many", getProcessedMatch);
 
 router.put("/", putProcessedMatch);
 

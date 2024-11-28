@@ -125,6 +125,22 @@ matchController.getOneProcessedMatch = async (req, res) => {
   }
 };
 
+matchController.getProcessedMatch = async (req, res) => {
+  try {
+    const match = await Match.find({ processed: true }).sort({
+      updatedAt: -1,
+    });
+
+    if (!match) {
+      return res.status(404).json({ message: "처리된 파일이 없습니다." });
+    }
+
+    res.status(200).json({ message: "처리된 파일 조회 성공", data: match });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+};
+
 matchController.putProcessedMatch = async (req, res) => {
   const { _id, statsJson } = req.body;
 

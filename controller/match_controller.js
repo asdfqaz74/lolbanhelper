@@ -109,7 +109,7 @@ matchController.getUnprocessedMatch = async (req, res) => {
   }
 };
 
-matchController.getOneProcessedMatch = async (req, res) => {
+matchController.getProcessedMatch = async (req, res) => {
   try {
     const match = await Match.findOne({ processed: true }).sort({
       updatedAt: -1,
@@ -125,7 +125,7 @@ matchController.getOneProcessedMatch = async (req, res) => {
   }
 };
 
-matchController.getProcessedMatch = async (req, res) => {
+matchController.getProcessedMatches = async (req, res) => {
   try {
     const match = await Match.find({ processed: true }).sort({
       updatedAt: -1,

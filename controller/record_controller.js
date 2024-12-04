@@ -29,7 +29,7 @@ record_controller.createRecords = async (req, res) => {
 
     res.status(200).json({ status: "생성 성공", data: newRecord });
   } catch (e) {
-    res.status(400).json({ status: "생성 실패" });
+    res.status(500).json({ status: "생성 실패" });
     console.error(e);
   }
 };
@@ -41,7 +41,7 @@ record_controller.createManyRecords = async (req, res) => {
 
     if (!Array.isArray(records)) {
       return res
-        .status(400)
+        .status(500)
         .json({ status: "fail", message: "records는 배열이어야 합니다." });
     }
 
@@ -72,7 +72,7 @@ record_controller.createManyRecords = async (req, res) => {
 
     res.status(200).json({ status: "생성 성공", data: createdRecords });
   } catch (e) {
-    res.status(400).json({ status: "생성 실패" });
+    res.status(500).json({ status: "생성 실패" });
     console.error(e);
   }
 };
@@ -83,7 +83,7 @@ record_controller.getChampion = async (req, res) => {
     const response = await Champion.find({});
     res.status(200).json({ status: "조회 성공", data: response });
   } catch (e) {
-    res.status(400).json({ status: "조회 실패" });
+    res.status(500).json({ status: "조회 실패" });
     console.error(e);
   }
 };
@@ -94,7 +94,7 @@ record_controller.getTotalMatchStats = async (req, res) => {
     const response = await MatchStats.find({}).sort({ createdAt: -1 });
     res.status(200).json({ status: "조회 성공", data: response });
   } catch (e) {
-    res.status(400).json({ status: "조회 실패" });
+    res.status(500).json({ status: "조회 실패" });
     console.error(e);
   }
 };
@@ -111,7 +111,7 @@ record_controller.getRanking = async (req, res) => {
       data: { mostChampion, mostWinRate, leastChampion, mostUserWinRate },
     });
   } catch (e) {
-    res.status(400).json({ status: "조회 실패" });
+    res.status(500).json({ status: "조회 실패" });
     console.error(e);
   }
 };
@@ -123,15 +123,43 @@ record_controller.getRecentMatchStats = async (req, res) => {
     const response = [];
 
     for (const user of userList) {
-      const getRecentMatchStats = await MatchStats.getRecentMatchStats(
-        user._id
-      );
-      response.push({ user, getRecentMatchStats });
+      const recentMatches = await MatchStats.getRecentMatchStats(user._id);
+      const userWinRate = await MatchStats.getWinRate(user._id);
+      const mainPosition = user.main_position;
+      const subPosition = user.sub_position;
+      const nickname = user.game_id ? user.game_id : user.name;
+      const userName = user.name;
+
+      if (recentMatches.length === 0) {
+        response.push({
+          userName,
+          mainPosition,
+          subPosition,
+          nickname,
+          recentMatches: ["전적이 없습니다."],
+          userWinRate,
+        });
+        continue;
+      }
+
+      response.push({
+        userName,
+        mainPosition,
+        subPosition,
+        nickname,
+        recentMatches,
+        userWinRate,
+      });
     }
 
-    res.status(200).json({ status: "조회 성공", data: response });
+    const sortedResponse = response.sort((a, b) => {
+      return a.userName.localeCompare(b.userName);
+    });
+
+    res.status(200).json({ status: "조회 성공", data: sortedResponse });
   } catch (e) {
     res.status(500).json({ status: "조회 실패" });
+    console.error(e);
   }
 };
 

@@ -34,6 +34,18 @@ const MatchStatsSchema = new Schema(
   { timestamps: true }
 );
 
+// 해당 유저의 승률을 가져오는 메소드
+MatchStatsSchema.statics.getWinRate = async function (userID) {
+  const winCount = await this.countDocuments({
+    user: userID,
+    victoryordefeat: "win",
+  });
+  const totalCount = await this.countDocuments({ user: userID });
+  const winRate = ((winCount / totalCount) * 100).toFixed(2);
+
+  return winRate;
+};
+
 // 해당 유저의 전적을 가져와서 승률 60% 이상이면 User의 isMVP를 true로 이하면 false로 설정하는 메소드
 MatchStatsSchema.statics.getMVP = async function (userID) {
   const winCount = await this.countDocuments({
@@ -79,12 +91,22 @@ MatchStatsSchema.statics.getMatchStats = async function (userID, championID) {
   return this.countDocuments({ user: userID, champion: championID });
 };
 
-// 해당 유저의 최근 5게임 전적을 가져오는 메소드
-MatchStatsSchema.methods.getRecentMatchStats = async function (userID) {
-  return this.find({ user: userID }).limit(5).sort({ createdAt: -1 });
+// 해당 유저의 최근 5게임 전적을 가져와서 win, lose 를 구분하여 반환하는 메소드
+MatchStatsSchema.statics.getRecentMatchStats = async function (userID) {
+  const response = await this.find({ user: userID })
+    .sort({ createdAt: -1 })
+    .limit(5);
+
+  const recentMatch = [];
+  for (const match of response) {
+    const { victoryordefeat } = match;
+    recentMatch.push(victoryordefeat);
+  }
+
+  return recentMatch;
 };
 
-// 챔피언 모스트 10 : 모든 매치 중에서 해당 챔피언이 가장 많이 픽된 챔피언을 가져오는 메소드
+// 챔피언 모스트 10 : 모든 매치 중에서 해당 챔피언이 가장 많이 픽된 챔피언 10개를 가져오는 메소드
 MatchStatsSchema.statics.getMostChampion = async function () {
   const response = await this.aggregate([
     {
@@ -104,7 +126,7 @@ MatchStatsSchema.statics.getMostChampion = async function () {
   return response;
 };
 
-// 승률 모스트 5 : 모든 매치 중에서 승률이 가장 높은 챔피언을 가져오는 메소드
+// 승률 모스트 5 : 모든 매치 중에서 승률이 가장 높은 챔피언 5개를 가져오는 메소드
 MatchStatsSchema.statics.getMostWinRate = async function () {
   const response = await this.aggregate([
     {
@@ -140,7 +162,7 @@ MatchStatsSchema.statics.getMostWinRate = async function () {
   return response;
 };
 
-// 승률 워스트 5 : 모든 매치 중에서 승률이 가장 낮은 챔피언을 가져오는 메소드
+// 승률 워스트 5 : 모든 매치 중에서 승률이 가장 낮은 챔피언 5개를 가져오는 메소드
 MatchStatsSchema.statics.getLeastWinRate = async function () {
   const response = await this.aggregate([
     {
@@ -176,7 +198,7 @@ MatchStatsSchema.statics.getLeastWinRate = async function () {
   return response;
 };
 
-// 승률 모스트 5 : 모든 매치 중에서 승률이 가장 높은 유저를 가져오는 메소드
+// 승률 모스트 5 : 모든 매치 중에서 승률이 가장 높은 유저 5명을 가져오는 메소드
 MatchStatsSchema.statics.getMostUserWinRate = async function () {
   const response = await this.aggregate([
     {

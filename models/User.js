@@ -22,14 +22,6 @@ const UserSchema = new Schema(
     main_character: {
       type: String,
     },
-    today_player: {
-      type: Boolean,
-      default: false,
-    },
-    today_team: {
-      type: String,
-      default: "",
-    },
     game_id: {
       type: String,
     },

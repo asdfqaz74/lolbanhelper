@@ -129,10 +129,12 @@ record_controller.getRecentMatchStats = async (req, res) => {
       const subPosition = user.sub_position;
       const nickname = user.game_id ? user.game_id : user.name;
       const userName = user.name;
+      const userId = user._id;
 
       if (recentMatches.length === 0) {
         response.push({
           userName,
+          userId,
           mainPosition,
           subPosition,
           nickname,
@@ -144,6 +146,7 @@ record_controller.getRecentMatchStats = async (req, res) => {
 
       response.push({
         userName,
+        userId,
         mainPosition,
         subPosition,
         nickname,

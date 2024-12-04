@@ -124,22 +124,32 @@ record_controller.getRecentMatchStats = async (req, res) => {
 
     for (const user of userList) {
       const recentMatches = await MatchStats.getRecentMatchStats(user._id);
+      const winCount = await MatchStats.getWinCount(user._id);
+      const loseCount = await MatchStats.getLoseCount(user._id);
+      const totalCount = winCount + loseCount;
       const userWinRate = await MatchStats.getWinRate(user._id);
       const mainPosition = user.main_position;
       const subPosition = user.sub_position;
       const nickname = user.game_id ? user.game_id : user.name;
       const userName = user.name;
       const userId = user._id;
+      const isMvp = user.isMVP;
+      const isSad = user.isSad;
 
-      if (recentMatches.length === 0) {
+      if (totalCount === 0) {
         response.push({
           userName,
           userId,
           mainPosition,
           subPosition,
           nickname,
-          recentMatches: ["전적이 없습니다."],
-          userWinRate,
+          winCount,
+          loseCount,
+          totalCount,
+          recentMatches: "전적이 없습니다.",
+          userWinRate: 0,
+          isMvp,
+          isSad,
         });
         continue;
       }
@@ -150,8 +160,13 @@ record_controller.getRecentMatchStats = async (req, res) => {
         mainPosition,
         subPosition,
         nickname,
+        winCount,
+        loseCount,
+        totalCount,
         recentMatches,
         userWinRate,
+        isMvp,
+        isSad,
       });
     }
 

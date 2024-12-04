@@ -46,6 +46,26 @@ MatchStatsSchema.statics.getWinRate = async function (userID) {
   return winRate;
 };
 
+// 해당 유저의 승 판수를 가져오는 메소드
+MatchStatsSchema.statics.getWinCount = async function (userID) {
+  const winCount = await this.countDocuments({
+    user: userID,
+    victoryordefeat: "win",
+  });
+
+  return winCount;
+};
+
+// 해당 유저의 패 판수를 가져오는 메소드
+MatchStatsSchema.statics.getLoseCount = async function (userID) {
+  const loseCount = await this.countDocuments({
+    user: userID,
+    victoryordefeat: "lose",
+  });
+
+  return loseCount;
+};
+
 // 해당 유저의 전적을 가져와서 승률 60% 이상이면 User의 isMVP를 true로 이하면 false로 설정하는 메소드
 MatchStatsSchema.statics.getMVP = async function (userID) {
   const winCount = await this.countDocuments({

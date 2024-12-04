@@ -9,6 +9,8 @@ router.post("/many", recordController.createManyRecords);
 
 router.get("/", recordController.getTotalMatchStats);
 
+router.get("/recent", recordController.getRecentMatchStats);
+
 router.get("/champion", recordController.getChampion);
 
 router.get("/ranking", recordController.getRanking);

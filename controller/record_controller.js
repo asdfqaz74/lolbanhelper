@@ -116,4 +116,23 @@ record_controller.getRanking = async (req, res) => {
   }
 };
 
+// 유저 별 최근 5전적 조회
+record_controller.getRecentMatchStats = async (req, res) => {
+  try {
+    const userList = await User.find({});
+    const response = [];
+
+    for (const user of userList) {
+      const getRecentMatchStats = await MatchStats.getRecentMatchStats(
+        user._id
+      );
+      response.push({ user, getRecentMatchStats });
+    }
+
+    res.status(200).json({ status: "조회 성공", data: response });
+  } catch (e) {
+    res.status(500).json({ status: "조회 실패" });
+  }
+};
+
 module.exports = record_controller;

@@ -1,6 +1,7 @@
 const MatchStats = require("../models/MatchStats");
 const User = require("../models/User");
 const Match = require("../models/Match");
+const Champion = require("../models/Champion");
 
 const userController = {};
 
@@ -102,6 +103,7 @@ userController.getUserDetail = async (req, res) => {
     const { id } = req.params;
     // 해당 유저의 매치 10판 가져오기
     const matchStats = await MatchStats.getRecentTenMatchStats(id);
+    const winRate = await MatchStats.getRecentTenMatchWinRate(id);
 
     const recentPosition = [];
     const winOrLose = [];
@@ -111,9 +113,15 @@ userController.getUserDetail = async (req, res) => {
       recentPosition.push(position);
       winOrLose.push(victoryordefeat);
     }
-    const user = await User.findById(id).select("name game_id -_id");
+    const user = await User.findById(id).select(
+      "name game_id main_character -_id"
+    );
     const name = user.name;
     const nickname = user.game_id;
+    const main_character = user.main_character;
+    const main_character_image = await Champion.findById(main_character).select(
+      "image -_id"
+    );
 
     const match = await Match.find({ "statsJson.summonerName": nickname })
       .sort({ createdAt: -1 })
@@ -125,6 +133,8 @@ userController.getUserDetail = async (req, res) => {
       name,
       nickname,
       match,
+      main_character_image,
+      winRate,
     };
 
     res.status(200).json({ status: "조회 성공", data: data });

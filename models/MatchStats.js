@@ -140,6 +140,20 @@ MatchStatsSchema.statics.getRecentTenMatchStats = async function (userID) {
   return response;
 };
 
+// 해당 유저의 최근 10게임 승률 가져오기
+MatchStatsSchema.statics.getRecentTenMatchWinRate = async function (userID) {
+  const response = await this.find({ user: userID })
+    .sort({ createdAt: -1 })
+    .limit(10);
+
+  const winCount = response.filter(
+    (match) => match.victoryordefeat === "win"
+  ).length;
+  const winRate = ((winCount / 10) * 100).toFixed(2);
+
+  return winRate;
+};
+
 // 챔피언 모스트 10 : 모든 매치 중에서 해당 챔피언이 가장 많이 픽된 챔피언 10개를 가져오는 메소드
 MatchStatsSchema.statics.getMostChampion = async function () {
   const response = await this.aggregate([

@@ -123,9 +123,19 @@ userController.getUserDetail = async (req, res) => {
       "image -_id"
     );
 
+    const image = main_character_image.image;
+
     const match = await Match.find({ "statsJson.summonerName": nickname })
       .sort({ createdAt: -1 })
       .limit(5);
+
+    const matchMe = [];
+
+    for (const matches of match) {
+      const { statsJson } = matches;
+      const findMe = statsJson.filter((user) => user.summonerName === nickname);
+      matchMe.push(findMe);
+    }
 
     const data = {
       recentPosition,
@@ -133,8 +143,9 @@ userController.getUserDetail = async (req, res) => {
       name,
       nickname,
       match,
-      main_character_image,
+      image,
       winRate,
+      matchMe,
     };
 
     res.status(200).json({ status: "조회 성공", data: data });

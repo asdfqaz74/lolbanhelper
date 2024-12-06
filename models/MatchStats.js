@@ -30,6 +30,11 @@ const MatchStatsSchema = new Schema(
       type: Number,
       required: true,
     },
+    position: {
+      type: String,
+      enum: ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"],
+      required: true,
+    },
   },
   { timestamps: true }
 );
@@ -124,6 +129,15 @@ MatchStatsSchema.statics.getRecentMatchStats = async function (userID) {
   }
 
   return recentMatch;
+};
+
+// 해당 유저의 최근 10게임 전적 가져오기
+MatchStatsSchema.statics.getRecentTenMatchStats = async function (userID) {
+  const response = await this.find({ user: userID })
+    .sort({ createdAt: -1 })
+    .limit(10);
+
+  return response;
 };
 
 // 챔피언 모스트 10 : 모든 매치 중에서 해당 챔피언이 가장 많이 픽된 챔피언 10개를 가져오는 메소드

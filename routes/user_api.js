@@ -23,4 +23,7 @@ router.delete("/:id", userController.deleteUser);
 // 선수 수정 API
 router.put("/:id", userController.updateUser);
 
+// 선수 디테일 API
+router.get("/detail/:id", userController.getUserDetail);
+
 module.exports = router;

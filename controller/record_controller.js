@@ -48,8 +48,15 @@ record_controller.createManyRecords = async (req, res) => {
     const createdRecords = [];
 
     for (const record of records) {
-      const { victoryordefeat, kills, deaths, assists, champion, user } =
-        record;
+      const {
+        victoryordefeat,
+        kills,
+        deaths,
+        assists,
+        champion,
+        user,
+        position,
+      } = record;
       const newRecord = new MatchStats({
         user,
         champion,
@@ -57,6 +64,7 @@ record_controller.createManyRecords = async (req, res) => {
         kills,
         deaths,
         assists,
+        position,
       });
       await newRecord.save();
       createdRecords.push(newRecord);

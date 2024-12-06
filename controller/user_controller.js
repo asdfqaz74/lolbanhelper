@@ -1,4 +1,6 @@
+const MatchStats = require("../models/MatchStats");
 const User = require("../models/User");
+const Match = require("../models/Match");
 
 const userController = {};
 
@@ -89,6 +91,46 @@ userController.resetWaitingList = async (req, res) => {
     res.status(200).json({ status: "전체 초기화 성공" });
   } catch (e) {
     res.status(400).json({ status: "전체 초기화 실패" });
+    console.error(e);
+  }
+};
+
+// 7. 유저 디테일 가져오는 API
+userController.getUserDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // 해당 유저의 매치 10판 가져오기
+    const matchStats = await MatchStats.getRecentTenMatchStats(id);
+
+    const recentPosition = [];
+    const winOrLose = [];
+
+    for (const match of matchStats) {
+      const { position, victoryordefeat } = match;
+      recentPosition.push(position);
+      winOrLose.push(victoryordefeat);
+    }
+    const user = await User.findById(id).select("name game_id -_id");
+    const name = user.name;
+    const nickname = user.game_id;
+
+    const match = await Match.find({ "statsJson.summonerName": nickname })
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    const data = {
+      recentPosition,
+      winOrLose,
+      name,
+      nickname,
+      match,
+    };
+
+    res.status(200).json({ status: "조회 성공", data: data });
+
+    // 해당 유저의 자주 사용하는 챔피언 가져오기
+  } catch (e) {
+    res.status(500).json({ status: "조회 실패" });
     console.error(e);
   }
 };

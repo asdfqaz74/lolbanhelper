@@ -21,6 +21,7 @@ userController.createUser = async (req, res) => {
       main_position,
       sub_position,
       main_character,
+      game_id: name,
     });
     await newUser.save();
     res.status(200).json({ status: "생성 성공", data: newUser });
